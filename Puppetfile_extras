@@ -6,26 +6,9 @@ mod 'haproxy',
   :ref => 'master'
 
 mod 'midonet',
-  :git => 'https://github.com/midonet/puppet-midonet',
-  :ref => 'v2015.06.7'
+  :git => 'https://github.com/openstack/puppet-midonet',
+  :ref => 'master'
 
-mod 'tomcat',
-  :git => 'https://github.com/puppetlabs/puppetlabs-tomcat',
-  :ref => '1.3.2'
-
-mod 'java',
-  :git => 'https://github.com/puppetlabs/puppetlabs-java',
-  :ref => '1.4.2'
-
-mod 'cassandra',
-  :git => 'https://github.com/locp/cassandra',
-  :ref => '1.9.2'
-
-mod 'zookeeper',
-  :git => 'https://github.com/deric/puppet-zookeeper',
-  :ref => 'v0.3.9'
-
-mod 'datacat',
-  :git => 'https://github.com/richardc/puppet-datacat',
-  :ref => '0.6.2'
-
+mod 'midonet_openstack',
+  :git => 'https://github.com/midonet/puppet-midonet_openstack',
+  :ref => 'master'

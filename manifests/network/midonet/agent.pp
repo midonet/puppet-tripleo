@@ -15,52 +15,103 @@
 #
 # == Class: tripleo::network::midonet::agent
 #
-# Configure the midonet agent
+# Configure the MidoNet Agent, MidoNet CLI, configure a set of initial
+# networks and register the node in the MidoNet registry
 #
 # == Parameters:
 #
-# [*zookeeper_servers*]
-#  (required) List of IPs of the zookeeper server cluster. It will configure
-#  the connection using the 2181 port.
-#  Array of strings value.
+# [*controller_host*]
+#   (Optional) IP pointing to the controller.
+#   Defaults to hiera('controller_host_ip', undef)
 #
-# [*cassandra_seeds*]
-#  (required) List of IPs of the cassandra cluster.
-#  Array of strings value.
+# [*midonet_cluster_vip*]
+#   (Optional) VIP for the MidoNet Cluster.
+#   Defaults to hiera('midonet_cluster_vip', undef)
+#
+# [*zookeeper_hosts*]
+#   (Optional) Array containing the IPs of the hosts that run Zookeeper.
+#   Defaults to hiera('midonet_nsdb_node_ips', ['127.0.0.1'])
+#
+# [*tunnelzone_type*]
+#   (Optional) Tunnelzone type to be used when registering the host.
+#   Defaults to hiera('tunnelzone_type', 'gre')
+#
+# [*metadata_port*]
+#   (Optional) Port on which the Metadata service listens.
+#   Defaults to hiera('metadata_port', '8775')
+#
+# [*shared_secret*]
+#   (Optional) Neutron shared secret.
+#   Defaults to hiera('neutron_shared_secret', undef)
+#
+# [*manage_repo*]
+#   (Optional) Whether to manage the MidoNet repositories or not.
+#   Defaults to hiera('midonet_manage_repos', false)
+#
+# [*username*]
+#   (Optional) Username that will be used to connect to Keystone.
+#  Defaults to hiera('admin_username', 'admin')
+#
+# [*password*]
+#   (Optional) Password for this user.
+#  Defaults to hiera('admin_password', undef)
+#
+# [*is_mem*]
+#   (Optional) Whether is the enterprise version of MidoNet or not.
+#   Defaults to hiera('step')
+#
+# [*step*]
+#   (Optional) The current step in deployment. See tripleo-heat-templates
+#   for more details.
+#   Defaults to hiera('step')
 #
 class tripleo::network::midonet::agent (
-  $zookeeper_servers,
-  $cassandra_seeds
+  $controller_host     = hiera('controller_host_ip', undef),
+  $midonet_cluster_vip = hiera('midonet_cluster_vip', undef),
+  $zookeeper_hosts     = hiera('midonet_nsdb_node_ips', ['127.0.0.1']),
+  $tunnelzone_type     = hiera('tunnelzone_type', 'gre'),
+  $metadata_port       = hiera('metadata_port', '8775'),
+  $shared_secret       = hiera('neutron_shared_secret', undef),
+  $manage_repo         = hiera('midonet_manage_repos', false),
+  $username            = hiera('admin_username', 'admin'),
+  $password            = hiera('admin_password', undef),
+  $is_mem              = hiera('midonet_version', 'oss'),
+  $step                = hiera('step'),
 ) {
+  if $step >= 4 {
+    include ::midonet_openstack::profile::midojava::midojava
 
-  # TODO: Remove comments below once we can guarantee that all the distros
-  # deploying TripleO use Puppet > 3.7 because of this bug:
-  # https://tickets.puppetlabs.com/browse/PUP-1299
+    $mem = $is_mem ? {
+      'mem'   => true,
+      'oss'   => false,
+      default => false
+    }
 
-  # validate_array($zookeeper_servers)
-  # validate_array($cassandra_seeds)
+    class { '::midonet::cli':
+      username => $username,
+      password => $password,
+    }
 
+    anchor { 'mn-agent_begin': } ->
+    class { '::midonet::agent':
+      controller_host => $controller_host,
+      metadata_port   => $metadata_port,
+      shared_secret   => $shared_secret,
+      manage_repo     => $manage_repo,
+      zookeeper_hosts => generate_api_zookeeper_ips($zookeeper_hosts),
+      is_mem          => $mem,
+      require         => Class['::midonet_openstack::profile::midojava::midojava'],
+    } ->
+    anchor { 'mn-agent_end': }
 
-  # FIXME: This statement should be controlled by hiera on heat templates
-  # project
-  # Make sure openvswitch service is not running
-  service {'openvswitch':
-    ensure => stopped,
-    enable => false
+    anchor { 'mn-hr_begin': } ->
+    midonet_host_registry { $::fqdn:
+      ensure          => present,
+      midonet_api_url => "http://${midonet_cluster_vip}:8181",
+      tunnelzone_type => $tunnelzone_type,
+      username        => $username,
+      password        => $password,
+    } ->
+    anchor { 'mn-hr_end': }
   }
-
-  exec {'delete datapaths':
-    command => '/usr/bin/mm-dpctl --delete-dp ovs-system',
-    path    => '/usr/bin:/usr/sbin:/bin',
-    onlyif  => '/usr/bin/mm-dpctl --show-dp ovs-system'
-  }
-
-  # Configure and run the agent
-  class {'::midonet::midonet_agent':
-    zk_servers      => list_to_zookeeper_hash($zookeeper_servers),
-    cassandra_seeds => $cassandra_seeds
-  }
-
-  Service['openvswitch'] -> Class['::midonet::midonet_agent::run']
-  Exec['delete datapaths'] -> Class['::midonet::midonet_agent::run']
 }

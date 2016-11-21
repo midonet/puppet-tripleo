@@ -21,35 +21,38 @@ describe 'tripleo::network::midonet::agent' do
 
   shared_examples_for 'tripleo::network::midonet::agent' do
 
-    let :params do
-      {
-        :zookeeper_servers => ['192.168.2.2', '192.168.2.3'],
-        :cassandra_seeds   => ['192.168.2.2', '192.168.2.3']
-      }
-    end
+    context 'with step 4' do
+      let :params do
+        {
+          :step => 4,
+        }
+      end
 
-    it 'should stop openvswitch' do
-      is_expected.to contain_service('openvswitch').with(
-        :ensure => 'stopped',
-        :enable => false
-      )
-    end
+      it 'should install Java on the target system' do
+        is_expected.to contain_class('midonet_openstack::profile::midojava::midojava')
+      end
 
-    it 'should run the agent with a list of maps' do
-      is_expected.to contain_class('midonet::midonet_agent').with(
-        :zk_servers => [{'ip'   => '192.168.2.2',
-                         'port' => 2181},
-                        {'ip'   => '192.168.2.3',
-                         'port' => 2181}],
-        :cassandra_seeds   => ['192.168.2.2','192.168.2.3']
-      )
+      it 'should install the MidoNet CLI package' do
+        is_expected.to contain_class('midonet::cli')
+      end
+
+      it 'should install the MidoNet Agent' do
+        is_expected.to contain_class('midonet::agent')
+      end
+
+      it 'should register the host in the MidoNet registry' do
+        is_expected.to contain_midonet_host_registry('node.example.com')
+      end
     end
   end
 
   on_supported_os.each do |os, facts|
     context "on #{os}" do
       let(:facts) do
-        facts.merge({})
+        facts.merge({
+          :hostname => 'node.example.com',
+          :fqdn     => 'node.example.com'
+        })
       end
 
       it_behaves_like 'tripleo::network::midonet::agent'
