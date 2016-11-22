@@ -12,3 +12,15 @@ mod 'midonet',
 mod 'midonet_openstack',
   :git => 'https://github.com/midonet/puppet-midonet_openstack',
   :ref => 'master'
+
+mod 'java',
+  :git => 'https://github.com/puppetlabs/puppetlabs-java',
+  :ref => '1.6.0'
+
+mod 'zookeeper',
+  :git => 'https://github.com/deric/puppet-zookeeper',
+  :ref => 'v0.6.1'
+
+mod 'cassandra',
+  :git => 'https://github.com/locp/cassandra',
+  :ref => '1.26.1'
