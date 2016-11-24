@@ -24,3 +24,27 @@ mod 'zookeeper',
 mod 'cassandra',
   :git => 'https://github.com/locp/cassandra',
   :ref => '1.26.1'
+
+mod 'logstash',
+  :git => 'https://github.com/elastic/puppet-logstash',
+  :ref => '0.6.4'
+
+mod 'elasticsearch',
+  :git => 'https://github.com/elastic/puppet-elasticsearch',
+  :ref => '0.13.2'
+
+mod 'file_concat',
+  :git => 'https://github.com/electrical/puppet-lib-file_concat',
+  :ref => '1.0.1'
+
+mod 'curator',
+  :git => 'https://github.com/tubemogul/puppet-curator',
+  :ref => '1.0.1'
+
+mod 'datacat',
+  :git => 'https://github.com/richardc/puppet-datacat',
+  :ref => '0.6.2'
+
+mod 'sysctl',
+  :git => 'https://github.com/thias/puppet-sysctl',
+  :ref => '1.0.6'
