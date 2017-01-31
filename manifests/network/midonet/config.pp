@@ -83,7 +83,7 @@ class tripleo::network::midonet::config(
   $neutron_tenant_name   = hiera('neutron_auth_tenant', undef),
   $step                  = hiera('step'),
 ) {
-  if $step >= 4 {
+  if $step >= 5 {
     midonet::resources::network_creation { 'Edge Router Setup':
       tenant_name         => $neutron_tenant_name,
       edge_router_name    => $edge_router_name,

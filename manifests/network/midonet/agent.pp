@@ -78,21 +78,19 @@ class tripleo::network::midonet::agent (
   $is_mem              = hiera('midonet_version', 'oss'),
   $step                = hiera('step'),
 ) {
+  include ::midonet_openstack::profile::midojava::midojava
+
+  $mem = $is_mem ? {
+    'mem'   => true,
+    'oss'   => false,
+    default => false
+  }
+
   if $step >= 4 {
-    include ::midonet_openstack::profile::midojava::midojava
-
-    $mem = $is_mem ? {
-      'mem'   => true,
-      'oss'   => false,
-      default => false
-    }
-
     class { '::midonet::cli':
       username => $username,
       password => $password,
     }
-
-    anchor { 'mn-agent_begin': } ->
     class { '::midonet::agent':
       controller_host => $controller_host,
       metadata_port   => $metadata_port,
@@ -101,17 +99,16 @@ class tripleo::network::midonet::agent (
       zookeeper_hosts => generate_api_zookeeper_ips($zookeeper_hosts),
       is_mem          => $mem,
       require         => Class['::midonet_openstack::profile::midojava::midojava'],
-    } ->
-    anchor { 'mn-agent_end': }
+    }
+  }
 
-    anchor { 'mn-hr_begin': } ->
+  if $step >= 5 {
     midonet_host_registry { $::fqdn:
       ensure          => present,
       midonet_api_url => "http://${midonet_cluster_vip}:8181",
       tunnelzone_type => $tunnelzone_type,
       username        => $username,
       password        => $password,
-    } ->
-    anchor { 'mn-hr_end': }
+    }
   }
 }

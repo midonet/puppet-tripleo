@@ -157,7 +157,7 @@ class tripleo::network::midonet::gateway(
   $tenant                  = hiera('auth_tenant', 'admin'),
   $step                    = hiera('step'),
 ) {
-  if $step >= 4 {
+  if $step >= 6 {
 
     if $uplink_type == 'static' {
       class { '::midonet::gateway::static':

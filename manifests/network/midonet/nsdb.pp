@@ -47,7 +47,7 @@ class tripleo::network::midonet::nsdb(
   $controller_nodes     = hiera('controller_node_names', undef),
   $step                 = hiera('step'),
 ) {
-  if $step >= 4 {
+  if $step >= 3 {
     include ::midonet_openstack::profile::midojava::midojava
 
     anchor { 'zookeeper_begin': } ->
