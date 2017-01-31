@@ -43,6 +43,14 @@
 #   (Optional) A list of IPs of the hosts that run Zookeeper.
 #   Defaults to hiera('midonet_nsdb_node_ips', undef)
 #
+# [*max_heap_size*]
+#   (Optional) Maximum heap size.
+#   Defaults to hiera('midonet_cluster_heap', undef)
+#
+# [*heap_newsize*]
+#   (Optional) Heap new size.
+#   Defaults to hiera('midonet_cluster_heap_newsize', undef)
+#
 # [*step*]
 #   (Optional) The current step in deployment. See tripleo-heat-templates
 #   for more details.
@@ -55,6 +63,8 @@ class tripleo::network::midonet::cluster (
   $keystone_user_name     = hiera('midonet_cluster_user', undef),
   $keystone_user_password = hiera('midonet_cluster_pass', undef),
   $keystone_tenant_name   = hiera('midonet_cluster_tenant', undef),
+  $max_heap_size          = hiera('midonet_cluster_heap', undef),
+  $heap_newsize           = hiera('midonet_cluster_heap_newsize', undef),
   $step                   = hiera('step'),
 ) {
   if $step >= 4 {
