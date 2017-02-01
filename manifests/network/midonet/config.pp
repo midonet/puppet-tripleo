@@ -81,6 +81,8 @@ class tripleo::network::midonet::config(
   $subnet_cidr           = hiera('nc_subnet_cidr', undef),
   $allocation_pools      = hiera('nc_allocation_pools', undef),
   $neutron_tenant_name   = hiera('neutron_auth_tenant', undef),
+  $midonet_cluster_port  = '8181',
+  $keystone_tenant       = hiera('keystone::roles::admin::service_tenant', undef),
   $step                  = hiera('step'),
 ) {
   if $step >= 5 {
@@ -97,6 +99,23 @@ class tripleo::network::midonet::config(
       subnet_cidr         => $subnet_cidr,
       allocation_pools    => [$allocation_pools],
       require             => Class['::neutron'],
+    }
+
+    class { 'neutron::plugins::midonet':
+      midonet_api_port => $midonet_cluster_port,
+      keystone_tenant  => $keystone_tenant,
+      sync_db          => true,
+    }
+
+    if !defined(Neutron_config['service_providers/service_provider'])
+    {
+      neutron_config {
+        'service_providers/service_provider': value => ['LOADBALANCERV2:Midonet:midonet.neutron.services.loadbalancer.v2_driver.MidonetLoadBalancerDriver:default']
+      }
+      Class['::midonet::neutron_plugin'] -> Neutron_config['service_providers/service_providers'] -> Service['neutron-server']
+    }
+    Neutron_config<| title == 'service_providers/service_provider' |> {
+      value => ['LOADBALANCERV2:Midonet:midonet.neutron.services.loadbalancer.v2_driver.MidonetLoadBalancerDriver:default']
     }
   }
 }
