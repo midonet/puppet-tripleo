@@ -137,7 +137,8 @@ class tripleo::network::midonet::config(
       keystone_tenant   => $keystone_tenant,
       sync_db           => true,
     }
-
+  }
+  if $step >= 4 {
     if !defined(Neutron_config['service_providers/service_provider'])
     {
       neutron_config {
