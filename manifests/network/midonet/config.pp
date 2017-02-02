@@ -126,16 +126,8 @@ class tripleo::network::midonet::config(
       gateway_ip          => $gateway_ip,
       subnet_cidr         => $subnet_cidr,
       allocation_pools    => [$allocation_pools],
+      binding_host_id     => $::fqdn,
       require             => Class['::neutron'],
-    }
-
-    class { 'neutron::plugins::midonet':
-      midonet_api_ip    => $midonet_cluster_ip,
-      midonet_api_port  => $midonet_cluster_port,
-      keystone_username => $keystone_username,
-      keystone_password => $keystone_password,
-      keystone_tenant   => $keystone_tenant,
-      sync_db           => true,
     }
   }
   if $step >= 4 {
@@ -148,6 +140,15 @@ class tripleo::network::midonet::config(
     }
     Neutron_config<| title == 'service_providers/service_provider' |> {
       value => ['LOADBALANCERV2:Midonet:midonet_ext.neutron.services.loadbalancer.v2_driver.MidonetLoadBalancerDriver:default']
+    }
+
+    class { 'neutron::plugins::midonet':
+      midonet_api_ip    => $midonet_cluster_ip,
+      midonet_api_port  => $midonet_cluster_port,
+      keystone_username => $keystone_username,
+      keystone_password => $keystone_password,
+      keystone_tenant   => $keystone_tenant,
+      sync_db           => true,
     }
   }
 }
