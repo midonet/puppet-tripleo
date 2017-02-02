@@ -69,6 +69,26 @@
 #   (Optional) Tenant name that is being used with Neutron.
 #   Defaults to hiera('neutron_auth_tenant', undef)
 #
+# [*midonet_cluster_ip*]
+# VIP of the MidoNet Cluster, where requests will be made.
+# Defaults to hiera('midonet_cluster_vip', undef)
+#
+# [*midonet_cluster_port*]
+# Port on which the MidoNet Cluster listens.
+# Defaults to '8181'
+#
+# [*keystone_username*]
+# Username to used to authenticate requests.
+# Defaults to hiera('nova::network::neutron::neutron_username', undef)
+#
+# [*keystone_password*]
+# Password for $keystone_username.
+# Defaults to hiera('neutron::keystone::auth::password', undef)
+#
+# [*keystone_tenant*]
+# Tenant on which $keystone_username has permissions.
+# Defaults to hiera('neutron::keystone::auth::tenant', undef)
+#
 class tripleo::network::midonet::config(
   $edge_router_name      = hiera('nc_edge_router_name', undef),
   $edge_network_name     = hiera('nc_edge_network_name', undef),
@@ -81,8 +101,11 @@ class tripleo::network::midonet::config(
   $subnet_cidr           = hiera('nc_subnet_cidr', undef),
   $allocation_pools      = hiera('nc_allocation_pools', undef),
   $neutron_tenant_name   = hiera('neutron_auth_tenant', undef),
+  $midonet_cluster_ip    = hiera('midonet_cluster_vip', undef),
   $midonet_cluster_port  = '8181',
-  $keystone_tenant       = hiera('keystone::roles::admin::service_tenant', undef),
+  $keystone_tenant       = hiera('neutron::keystone::auth::tenant', undef),
+  $keystone_password     = hiera('neutron::keystone::auth::password', undef),
+  $keystone_username     = hiera('nova::network::neutron::neutron_username', undef),
   $step                  = hiera('step'),
 ) {
   if $step >= 5 {
@@ -102,9 +125,12 @@ class tripleo::network::midonet::config(
     }
 
     class { 'neutron::plugins::midonet':
-      midonet_api_port => $midonet_cluster_port,
-      keystone_tenant  => $keystone_tenant,
-      sync_db          => true,
+      midonet_api_ip    => $midonet_cluster_ip,
+      midonet_api_port  => $midonet_cluster_port,
+      keystone_username => $keystone_username,
+      keystone_password => $keystone_password,
+      keystone_tenant   => $keystone_tenant,
+      sync_db           => true,
     }
 
     if !defined(Neutron_config['service_providers/service_provider'])
