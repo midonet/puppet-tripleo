@@ -69,6 +69,10 @@
 #   (Optional) Tenant name that is being used with Neutron.
 #   Defaults to hiera('neutron_auth_tenant', undef)
 #
+# [*neutron_service_provider*]
+#   (Optional) Service providers to be used by Neutron.
+#   Defaults to hiera('neutron_auth_tenant', undef)
+#
 # [*midonet_cluster_ip*]
 # VIP of the MidoNet Cluster, where requests will be made.
 # Defaults to hiera('midonet_cluster_vip', undef)
@@ -90,23 +94,24 @@
 # Defaults to hiera('neutron::keystone::auth::tenant', undef)
 #
 class tripleo::network::midonet::config(
-  $edge_router_name      = hiera('nc_edge_router_name', undef),
-  $edge_network_name     = hiera('nc_edge_network_name', undef),
-  $edge_subnet_name      = hiera('nc_edge_subnet_name', undef),
-  $edge_cidr             = hiera('nc_edge_cidr', undef),
-  $port_name             = hiera('nc_port_name', undef),
-  $port_fixed_ip         = hiera('nc_port_fixed_ip', undef),
-  $port_interface_name   = hiera('nc_port_interface_name', undef),
-  $gateway_ip            = hiera('nc_gateway_ip', undef),
-  $subnet_cidr           = hiera('nc_subnet_cidr', undef),
-  $allocation_pools      = hiera('nc_allocation_pools', undef),
-  $neutron_tenant_name   = hiera('neutron_auth_tenant', undef),
-  $midonet_cluster_ip    = hiera('midonet_cluster_vip', undef),
-  $midonet_cluster_port  = '8181',
-  $keystone_tenant       = hiera('neutron::keystone::auth::tenant', undef),
-  $keystone_password     = hiera('neutron::keystone::auth::password', undef),
-  $keystone_username     = hiera('nova::network::neutron::neutron_username', undef),
-  $step                  = hiera('step'),
+  $edge_router_name         = hiera('nc_edge_router_name', undef),
+  $edge_network_name        = hiera('nc_edge_network_name', undef),
+  $edge_subnet_name         = hiera('nc_edge_subnet_name', undef),
+  $edge_cidr                = hiera('nc_edge_cidr', undef),
+  $port_name                = hiera('nc_port_name', undef),
+  $port_fixed_ip            = hiera('nc_port_fixed_ip', undef),
+  $port_interface_name      = hiera('nc_port_interface_name', undef),
+  $gateway_ip               = hiera('nc_gateway_ip', undef),
+  $subnet_cidr              = hiera('nc_subnet_cidr', undef),
+  $allocation_pools         = hiera('nc_allocation_pools', undef),
+  $neutron_tenant_name      = hiera('neutron_auth_tenant', undef),
+  $neutron_service_provider = hiera('neutron_service_provider', undef),
+  $midonet_cluster_ip       = hiera('midonet_cluster_vip', undef),
+  $midonet_cluster_port     = '8181',
+  $keystone_username        = hiera('nova::network::neutron::neutron_username', undef),
+  $keystone_password        = hiera('neutron::keystone::auth::password', undef),
+  $keystone_tenant          = hiera('neutron::keystone::auth::tenant', undef),
+  $step                     = hiera('step'),
 ) {
   if $step >= 5 {
     midonet::resources::network_creation { 'Edge Router Setup':
