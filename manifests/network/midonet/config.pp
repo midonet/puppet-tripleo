@@ -114,6 +114,7 @@ class tripleo::network::midonet::config(
   $step                      = hiera('step'),
 ) {
   if $step >= 5 {
+    anchor { 'network_creation::begin': } ->
     midonet::resources::network_creation { 'Edge Router Setup':
       tenant_name         => $neutron_tenant_name,
       edge_router_name    => $edge_router_name,
@@ -128,7 +129,8 @@ class tripleo::network::midonet::config(
       allocation_pools    => [$allocation_pools],
       binding_host_id     => $::fqdn,
       require             => Class['::neutron'],
-    }
+    } ->
+    anchor { 'network_creation::end': }
   }
   if $step >= 4 {
     if !defined(Neutron_config['service_providers/service_provider'])

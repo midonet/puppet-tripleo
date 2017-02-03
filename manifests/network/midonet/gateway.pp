@@ -157,9 +157,12 @@ class tripleo::network::midonet::gateway(
   $tenant                  = hiera('auth_tenant', 'admin'),
   $step                    = hiera('step'),
 ) {
+
+
   if $step >= 5 {
 
     if $uplink_type == 'static' {
+      anchor { 'gateway_config::begin': } ->
       class { '::midonet::gateway::static':
         nic            => $static_nic,
         fip            => $static_fip,
@@ -170,9 +173,11 @@ class tripleo::network::midonet::gateway(
         scripts_dir    => $static_scripts_dir,
         uplink_script  => $static_uplink_script,
         ensure_scripts => $static_ensure_scripts,
-      }
+      } ->
+      anchor { 'gateway_config::end': }
     }
     elsif $uplink_type == 'bgp' {
+      anchor { 'gateway_config::begin': } ->
       midonet_gateway_bgp { 'edge-router':
         ensure                  => present,
         bgp_local_as_number     => $bgp_local_as_number,
@@ -186,7 +191,16 @@ class tripleo::network::midonet::gateway(
         username                => $username,
         password                => $password,
         tenant_name             => $tenant,
-      }
+      } ->
+      anchor { 'gateway_config::end': }
+    }
+
+    # The version of puppet-neutron included in Fuel 9 doesnt allow passing in service_providers option
+    # so let's override it directly
+    if defined(Class['tripleo::network::midonet::config'])
+    {
+      Anchor['network_creation::end'] -> Anchor['gateway_config::begin']
     }
   }
+
 }
