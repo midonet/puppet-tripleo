@@ -66,7 +66,7 @@
 #   Defaults to hiera('step')
 #
 class tripleo::network::midonet::agent (
-  $controller_host     = hiera('controller_host_ip', undef),
+  $controller_host     = hiera('controller_virtual_ip', undef),
   $midonet_cluster_vip = hiera('midonet_cluster_vip', undef),
   $zookeeper_hosts     = hiera('midonet_nsdb_node_ips', ['127.0.0.1']),
   $tunnelzone_type     = hiera('tunnelzone_type', 'gre'),
