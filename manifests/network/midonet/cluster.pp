@@ -206,7 +206,7 @@ class tripleo::network::midonet::cluster (
   $is_insights               = hiera('cluster_is_insights', undef),
   $is_mem                    = hiera('is_mem', undef),
   $keystone_host             = hiera('keystone_host', undef),
-  $nsdb_nodes                = hiera('midonet_nsdb_node_ips', undef),
+  $nsdb_nodes                = hiera('midonet_nsdb_node_ips', ['127.0.0.1']),
   $max_heap_size             = hiera('midonet_cluster_heap', undef),
   $heap_newsize              = hiera('midonet_cluster_heap_newsize', undef),
   $keystone_user_name        = hiera('midonet_cluster_user', undef),
