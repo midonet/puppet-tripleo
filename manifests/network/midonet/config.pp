@@ -136,12 +136,16 @@ class tripleo::network::midonet::config(
     if !defined(Neutron_config['service_providers/service_provider'])
     {
       neutron_config {
-        'service_providers/service_provider': value => ['LOADBALANCERV2:Midonet:midonet.neutron.services.loadbalancer.v2_driver.MidonetLoadBalancerDriver:default']
+        'client': value => ['LOADBALANCERV2:Midonet:midonet.neutron.services.loadbalancer.v2_driver.MidonetLoadBalancerDriver:default']
       }
       Class['::midonet::neutron_plugin'] -> Neutron_config['service_providers/service_providers'] -> Service['neutron-server']
     }
     Neutron_config<| title == 'service_providers/service_provider' |> {
       value => ['LOADBALANCERV2:Midonet:midonet_ext.neutron.services.loadbalancer.v2_driver.MidonetLoadBalancerDriver:default']
+    }
+
+    neutron_plugin_midonet {
+      'MIDONET/client': value => "midonet_ext.neutron.client.api.MidonetApiClient";
     }
 
     class { 'neutron::plugins::midonet':

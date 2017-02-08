@@ -39,6 +39,14 @@ describe 'tripleo::network::midonet::agent' do
       it 'should install the MidoNet Agent' do
         is_expected.to contain_class('midonet::agent')
       end
+    end
+
+    context 'with step 5' do
+      let :params do
+        {
+          :step => 5,
+        }
+      end
 
       it 'should register the host in the MidoNet registry' do
         is_expected.to contain_midonet_host_registry('node.example.com')

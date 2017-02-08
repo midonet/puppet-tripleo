@@ -100,7 +100,8 @@
 #   Default: undef
 #
 # [*mem_proxy_preserve_host*]
-#   Should configure proxy preserve host on Apache?
+#   Whether Apache should preserve the original host in the Host header.
+#   Defaults to
 #
 # [*ssl_cert*]
 #   Path where the SSL certificate is.
@@ -111,7 +112,7 @@
 #   Default: undef
 #
 # [*insights_ssl*]
-#   Is MEM Insights using SSL?
+#   Set to true if Insights is configured to work with SSL enabled.
 #   Default: undef
 #
 # [*mem_api_port*]

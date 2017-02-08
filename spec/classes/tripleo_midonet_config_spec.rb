@@ -31,10 +31,10 @@ describe 'tripleo::network::midonet::config' do
       end
     end
 
-    context 'with step 4' do
+    context 'with step 5' do
       let :params do
         {
-          :step                => 4,
+          :step                => 5,
           :port_interface_name => 'enp0s3',
           :neutron_tenant_name => 'my_tenant',
           :edge_router_name    => 'my_edge_router',

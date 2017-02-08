@@ -32,10 +32,10 @@ describe 'tripleo::network::midonet::gateway' do
       end
     end
 
-    context 'with step 4 and static uplink set' do
+    context 'with step 5 and static uplink set' do
       let :params do
         {
-          :step        => 4,
+          :step        => 5,
           :uplink_type => 'static',
         }
       end
@@ -45,10 +45,10 @@ describe 'tripleo::network::midonet::gateway' do
       end
     end
 
-    context 'with step 4 and bgp uplink set' do
+    context 'with step 5 and bgp uplink set' do
       let :params do
         {
-          :step               => 4,
+          :step               => 5,
           :uplink_type        => 'bgp',
           :bgp_neighbors_ips  => ['192.168.0.1', '192.168.0.2'],
           :bgp_neighbors_asns => ['12345', '23456'],
