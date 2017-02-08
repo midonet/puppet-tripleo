@@ -141,7 +141,10 @@ class tripleo::network::midonet::config(
       Class['::midonet::neutron_plugin'] -> Neutron_config['service_providers/service_providers'] -> Service['neutron-server']
     }
     Neutron_config<| title == 'service_providers/service_provider' |> {
-      value => ['LOADBALANCERV2:Midonet:midonet_ext.neutron.services.loadbalancer.v2_driver.MidonetLoadBalancerDriver:default']
+      value => [
+        'LOADBALANCERV2:Midonet:midonet_ext.neutron.services.loadbalancer.v2_driver.MidonetLoadBalancerDriver:default',
+        'VPN:Midonet:midonet.neutron.services.vpn.service_drivers.midonet_ipsec.MidonetIPsecVPNDriver:default'
+      ]
     }
 
     neutron_plugin_midonet {
