@@ -123,6 +123,10 @@
 #   The port where the MidoNet Traces service is listening.
 #   Default: '8460'
 #
+# [*mem_subscription_port*]
+#   Port where the MidoNet Subscription service is listening.
+#   Default: '8460'
+#
 # [*mem_analytics_port*]
 #   The port where the MidoNet Analytics is listening.
 #   Default: '8000'
@@ -136,33 +140,33 @@
 #   Default: false
 #
 class tripleo::network::midonet::mem(
-  $is_insights                    = hiera('mem_is_insights', undef),
-  $mem_analytics_port             = hiera('mem_analytics_port', undef),
-  $cluster_ip                     = hiera('mem_cluster_ip', undef),
-  $analytics_ip                   = hiera('mem_analytics_ip', undef),
-  $is_ssl                         = hiera('mem_use_ssl', undef),
-  $mem_api_namespace              = hiera('mem_api_namespace', undef),
-  $mem_trace_namespace            = hiera('mem_trace_namespace', undef),
-  $mem_analytics_namespace        = hiera('mem_analytics_namespace', undef),
-  $mem_package                    = hiera('mem_package', undef),
-  $mem_install_path               = hiera('mem_install_path', undef),
-  $mem_api_version                = hiera('mem_api_version', undef),
-  $mem_api_token                  = hiera('mem_api_token', undef),
-  $mem_agent_config_api_namespace = hiera('mem_agent_config_api_namespace', undef),
-  $mem_poll_enabled               = hiera('mem_poll_enabled', undef),
-  $mem_login_animation_enabled    = hiera('mem_login_animation_enabled', undef),
-  $mem_config_file                = hiera('mem_config_file', undef),
-  $mem_apache_docroot             = hiera('mem_apache_docroot', undef),
-  $mem_apache_port                = hiera('mem_apache_port', undef),
-  $mem_proxy_preserve_host        = hiera('mem_proxy_preserve_host', undef),
-  $ssl_cert                       = hiera('mem_ssl_cert', undef),
-  $ssl_key                        = hiera('mem_ssl_key', undef),
-  $insights_ssl                   = hiera('insights_ssl', undef),
-  $mem_api_port                   = hiera('mem_api_port', undef),
-  $mem_trace_port                 = hiera('mem_trace_port', undef),
-  $mem_subscription_port          = hiera('mem_subscription_port', undef),
-  $mem_fabric_port                = hiera('mem_fabric_port', undef),
-  $api_ssl                        = hiera('api_ssl', undef),
+  $is_insights                    = hiera('midonet_mem_is_insights', undef),
+  $mem_analytics_port             = hiera('midonet_mem_analytics_port', undef),
+  $cluster_ip                     = hiera('midonet_mem_cluster_ip', undef),
+  $analytics_ip                   = hiera('midonet_mem_analytics_ip', undef),
+  $is_ssl                         = hiera('midonet_mem_use_ssl', undef),
+  $mem_api_namespace              = hiera('midonet_mem_api_namespace', undef),
+  $mem_trace_namespace            = hiera('midonet_mem_trace_namespace', undef),
+  $mem_analytics_namespace        = hiera('midonet_mem_analytics_namespace', undef),
+  $mem_package                    = hiera('midonet_mem_package', undef),
+  $mem_install_path               = hiera('midonet_mem_install_path', undef),
+  $mem_api_version                = hiera('midonet_mem_api_version', undef),
+  $mem_api_token                  = hiera('midonet_mem_api_token', undef),
+  $mem_agent_config_api_namespace = hiera('midonet_mem_agent_config_api_namespace', undef),
+  $mem_poll_enabled               = hiera('midonet_mem_poll_enabled', undef),
+  $mem_login_animation_enabled    = hiera('midonet_mem_login_animation_enabled', undef),
+  $mem_config_file                = hiera('midonet_mem_config_file', undef),
+  $mem_apache_docroot             = hiera('midonet_mem_apache_docroot', undef),
+  $mem_apache_port                = hiera('midonet_mem_apache_port', undef),
+  $mem_proxy_preserve_host        = hiera('midonet_mem_proxy_preserve_host', undef),
+  $ssl_cert                       = hiera('midonet_mem_ssl_cert', undef),
+  $ssl_key                        = hiera('midonet_mem_ssl_key', undef),
+  $insights_ssl                   = hiera('midonet_insights_ssl', undef),
+  $mem_api_port                   = hiera('midonet_mem_api_port', undef),
+  $mem_trace_port                 = hiera('midonet_mem_trace_port', undef),
+  $mem_subscription_port          = hiera('midonet_mem_subscription_port', undef),
+  $mem_fabric_port                = hiera('midonet_mem_fabric_port', undef),
+  $api_ssl                        = hiera('midonet_api_ssl', undef),
   $step                           = hiera('step'),
 ) {
   if $step >= 4 {
@@ -176,8 +180,8 @@ class tripleo::network::midonet::mem(
       mem_trace_namespace            => $mem_trace_namespace,
       mem_analytics_namespace        => $mem_analytics_namespace,
       mem_package                    => $mem_package,
-      mem_install_path               => $gw_mem_install_path,
-      mem_api_version                => $gw_mem_api_version,
+      mem_install_path               => $mem_install_path,
+      mem_api_version                => $mem_api_version,
       mem_api_token                  => $mem_api_token,
       mem_agent_config_api_namespace => $mem_agent_config_api_namespace,
       mem_poll_enabled               => $mem_poll_enabled,

@@ -148,10 +148,10 @@ class tripleo::network::midonet::config(
     }
 
     neutron_plugin_midonet {
-      'MIDONET/client': value => "midonet_ext.neutron.client.api.MidonetApiClient";
+      'MIDONET/client': value => 'midonet_ext.neutron.client.api.MidonetApiClient';
     }
 
-    class { 'neutron::plugins::midonet':
+    class { '::neutron::plugins::midonet':
       midonet_api_ip    => $midonet_cluster_ip,
       midonet_api_port  => $midonet_cluster_port,
       keystone_username => $keystone_username,

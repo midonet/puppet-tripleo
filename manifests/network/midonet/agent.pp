@@ -93,7 +93,7 @@ class tripleo::network::midonet::agent (
 
   # midonet-cluster might be running on the base image. This ensures that
   # the service is stopped in nodes other than the controller.
-  if ! defined("tripleo::network::midonet::cluster") {
+  if ! defined('tripleo::network::midonet::cluster') {
     service { 'midonet-cluster': ensure => stopped }
   }
 
