@@ -58,7 +58,11 @@
 #
 # [*is_mem*]
 #   (Optional) Whether is the enterprise version of MidoNet or not.
-#   Defaults to hiera('step')
+#   Defaults to hiera('midonet_version', 'oss')
+#
+# [*max_heap_size*]
+#   (Optional) Amount of heap memory the JVM will use to run the MidoNet Agent.
+#   Defaults to hiera('midonet_agent_heap_size', undef)
 #
 # [*step*]
 #   (Optional) The current step in deployment. See tripleo-heat-templates
@@ -76,6 +80,7 @@ class tripleo::network::midonet::agent (
   $username            = hiera('admin_username', 'admin'),
   $password            = hiera('admin_password', undef),
   $is_mem              = hiera('midonet_version', 'oss'),
+  $max_heap_size       = hiera('midonet_agent_heap_size', undef),
   $step                = hiera('step'),
 ) {
   include ::midonet_openstack::profile::midojava::midojava
@@ -103,6 +108,7 @@ class tripleo::network::midonet::agent (
       shared_secret   => $shared_secret,
       manage_repo     => $manage_repo,
       zookeeper_hosts => generate_api_zookeeper_ips($zookeeper_hosts),
+      max_heap_size   => $max_heap_size,
       is_mem          => $mem,
       require         => Class['::midonet_openstack::profile::midojava::midojava'],
     }
