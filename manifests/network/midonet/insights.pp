@@ -35,6 +35,26 @@
 #   (Optional) Array containing the IPs of the hosts running Zookeeper.
 #   Defaults to hiera('insights_allinone', true)
 #
+# [*curator_version*]
+#   Version of Elasticsearch Curator.
+#   Defaults to hiera('midonet_insights_curator_version', undef)
+#
+# [*midonet_version*]
+#   MidoNet version that is being installed.
+#   Defaults to hiera('midonet_insights_midonet_version', undef)
+#
+# [*elk_bind_ip*]
+#   Which interface will the ELK instance be binding to.
+#   Defaults to hiera('midonet_insights_elk_bind_ip', undef)
+#
+# [*elk_cluster_name*]
+#   Name of the ELK cluster.
+#   Defaults to hiera('midonet_insights_elk_cluster_name', undef)
+#
+# [*elk_hosts*]
+#   List of ELK seeds.
+#   Defaults to hiera('midonet_insights_elk_hosts', undef)
+#
 # [*step*]
 #   (Optional) The current step in deployment. See tripleo-heat-templates
 #   for more details.
@@ -45,16 +65,26 @@ class tripleo::network::midonet::insights(
   $allinone             = hiera('insights_allinone', true),
   $calliope_port        = hiera('insights_calliope_port', undef),
   $zookeeper_hosts      = hiera('midonet_nsdb_node_ips', ['127.0.0.1']),
+  $curator_version      = hiera('midonet_insights_curator_version', undef),
+  $midonet_version      = hiera('midonet_insights_midonet_version', undef),
+  $elk_bind_ip          = hiera('midonet_insights_elk_bind_ip', undef),
+  $elk_cluster_name     = hiera('midonet_insights_elk_cluster_name', undef),
+  $elk_hosts            = hiera('midonet_insights_elk_hosts', undef),
   $step                 = hiera('step'),
 ) {
   if $step >= 4 {
     include ::midonet_openstack::profile::midojava::midojava
 
     class { '::midonet::analytics':
-      heap_size_gb    => $heap_size_gb,
-      allinone        => $allinone,
-      calliope_port   => $calliope_port,
-      zookeeper_hosts => generate_api_zookeeper_ips($zookeeper_hosts),
+      heap_size_gb     => $heap_size_gb,
+      allinone         => $allinone,
+      calliope_port    => $calliope_port,
+      zookeeper_hosts  => generate_api_zookeeper_ips($zookeeper_hosts),
+      midonet_version  => $midonet_version,
+      curator_version  => $curator_version,
+      elk_bind_ip      => $elk_bind_ip,
+      elk_cluster_name => $elk_cluster_name,
+      elk_hosts        => $elk_hosts,
     }
   }
 }

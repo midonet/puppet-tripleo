@@ -24,6 +24,7 @@ describe 'tripleo::network::midonet::insights' do
       let :params do
         {
           :step => 3,
+          :midonet_version => '5.2'
         }
       end
 
@@ -36,6 +37,7 @@ describe 'tripleo::network::midonet::insights' do
       let :params do
         {
           :step => 4,
+          :midonet_version => '5.2'
         }
       end
 
