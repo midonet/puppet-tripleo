@@ -251,7 +251,7 @@ class tripleo::network::midonet::cluster (
 ) {
   include ::stdlib
 
-  $joined_elk_seeds = join($elk_seeds, ',')
+  $joined_elk_seeds = join([$elk_seeds], ',')
 
   if $step >= 4 {
     include ::midonet_openstack::profile::midojava::midojava
