@@ -249,6 +249,10 @@ class tripleo::network::midonet::cluster (
   $state_proxy_port          = hiera('midonet_cluster_state_proxy_port', undef),
   $step                      = hiera('step'),
 ) {
+  include ::stdlib
+
+  $joined_elk_seeds = join($elk_seeds, ',')
+
   if $step >= 4 {
     include ::midonet_openstack::profile::midojava::midojava
 
@@ -283,7 +287,7 @@ class tripleo::network::midonet::cluster (
       insights_ssl              => $insights_ssl,
       analytics_ip              => $analytics_ip,
       midonet_version           => $midonet_version,
-      elk_seeds                 => $elk_seeds,
+      elk_seeds                 => $joined_elk_seeds,
       cluster_api_address       => $cluster_api_address,
       cluster_api_port          => $cluster_api_port,
       elk_cluster_name          => $elk_cluster_name,
