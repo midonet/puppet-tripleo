@@ -51,10 +51,6 @@
 #   Name of the ELK cluster.
 #   Defaults to hiera('midonet_insights_elk_cluster_name', undef)
 #
-# [*elk_hosts*]
-#   List of ELK seeds.
-#   Defaults to hiera('midonet_insights_elk_hosts', undef)
-#
 # [*step*]
 #   (Optional) The current step in deployment. See tripleo-heat-templates
 #   for more details.
@@ -69,11 +65,12 @@ class tripleo::network::midonet::insights(
   $midonet_version      = hiera('midonet_insights_midonet_version', undef),
   $elk_bind_ip          = hiera('midonet_insights_elk_bind_ip', undef),
   $elk_cluster_name     = hiera('midonet_insights_elk_cluster_name', undef),
-  $elk_hosts            = hiera('midonet_insights_elk_hosts', undef),
   $step                 = hiera('step'),
 ) {
   if $step >= 4 {
     include ::midonet_openstack::profile::midojava::midojava
+
+    $elk_hosts = join(hiera('midonet_analytics_node_ips', []), ',')
 
     class { '::midonet::analytics':
       heap_size_gb     => $heap_size_gb,

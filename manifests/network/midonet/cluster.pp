@@ -135,10 +135,6 @@
 #   (Optional) Version of Midonet that is being deployed.
 #   Default: hiera('midonet_cluster_midonet_version', undef)
 #
-# [*elk_seeds*]
-#   (Optional) List of ELK seeds , in the form of "ip1,ip2,ip3".
-#   Default: hiera('midonet_cluster_elk_seeds', undef)
-#
 # [*cluster_api_address*]
 #   (Optional) IP Address that will be publicly exposed for the REST API.
 #   Default: hiera('midonet_cluster_cluster_api_address', undef)
@@ -230,7 +226,6 @@ class tripleo::network::midonet::cluster (
   $insights_ssl              = hiera('midonet_cluster_insights_ssl', undef),
   $analytics_ip              = hiera('midonet_cluster_analytics_ip', undef),
   $midonet_version           = hiera('midonet_cluster_midonet_version', undef),
-  $elk_seeds                 = hiera('midonet_cluster_elk_seeds', undef),
   $cluster_api_address       = hiera('midonet_cluster_cluster_api_address', undef),
   $cluster_api_port          = hiera('midonet_cluster_cluster_api_port', undef),
   $elk_cluster_name          = hiera('midonet_cluster_elk_cluster_name', undef),
@@ -251,10 +246,10 @@ class tripleo::network::midonet::cluster (
 ) {
   include ::stdlib
 
-  $joined_elk_seeds = join([$elk_seeds], ',')
-
   if $step >= 4 {
     include ::midonet_openstack::profile::midojava::midojava
+
+    $elk_seeds = join(hiera('midonet_analytics_node_ips', []), ',')
 
     anchor { 'mn-cluster_begin': } ->
     class { '::midonet::cluster':
@@ -287,7 +282,7 @@ class tripleo::network::midonet::cluster (
       insights_ssl              => $insights_ssl,
       analytics_ip              => $analytics_ip,
       midonet_version           => $midonet_version,
-      elk_seeds                 => $joined_elk_seeds,
+      elk_seeds                 => $elk_seeds,
       cluster_api_address       => $cluster_api_address,
       cluster_api_port          => $cluster_api_port,
       elk_cluster_name          => $elk_cluster_name,
@@ -309,3 +304,4 @@ class tripleo::network::midonet::cluster (
     anchor { 'mn-cluster_end': }
   }
 }
+
