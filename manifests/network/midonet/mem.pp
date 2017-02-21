@@ -172,7 +172,7 @@ class tripleo::network::midonet::mem(
   if $step >= 4 {
     class { '::midonet::mem':
       is_insights                    => $is_insights,
-      mem_analytics_port             => $mem_analytics_port,
+      mem_analytics_port             => ":$mem_analytics_port",
       cluster_ip                     => $cluster_ip,
       analytics_ip                   => $analytics_ip,
       is_ssl                         => $is_ssl,
