@@ -232,7 +232,7 @@ class tripleo::network::midonet::cluster (
   $elk_target_endpoint       = hiera('midonet_cluster_elk_target_endpoint', undef),
   $endpoint_host             = hiera('midonet_cluster_endpoint_host', undef),
   $endpoint_port             = hiera('midonet_cluster_endpoint_port', undef),
-  $ssl_source_type           = hiera('midonet_cluster_ssl_source_type', undef),
+  $ssl_source_type           = hiera('midonet_cluster_ssl_source_type', 'autosigned'),
   $ssl_cert_path             = hiera('midonet_cluster_ssl_cert_path', undef),
   $ssl_privkey_path          = hiera('midonet_cluster_ssl_privkey_path', undef),
   $ssl_privkey_pwd           = hiera('midonet_cluster_ssl_privkey_pwd', undef),
