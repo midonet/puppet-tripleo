@@ -70,7 +70,7 @@ class tripleo::network::midonet::insights(
   if $step >= 4 {
     include ::midonet_openstack::profile::midojava::midojava
 
-    $elk_hosts = join(hiera('midonet_analytics_node_ips', []), ',')
+    $elk_hosts = hiera('midonet_analytics_node_ips')
 
     class { '::midonet::analytics':
       heap_size_gb     => $heap_size_gb,
