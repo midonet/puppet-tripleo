@@ -67,6 +67,15 @@ class tripleo::network::midonet::insights(
   $elk_cluster_name     = hiera('midonet_insights_elk_cluster_name', undef),
   $step                 = hiera('step'),
 ) {
+
+  file { '/tmp/install-midonet-elk.sh':
+    ensure => present,
+    source => 'puppet:///modules/midonet/analytics/install-midonet-elk.sh',
+  } ->
+  exec { '/bin/bash /tmp/install-midonet-elk.sh':
+    unless => '/bin/ls /etc/logstash/conf.d/midonet.conf',
+  }
+
   if $step >= 4 {
     include ::midonet_openstack::profile::midojava::midojava
 
