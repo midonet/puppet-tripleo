@@ -70,12 +70,6 @@ class tripleo::network::midonet::insights(
   if $step >= 4 {
     include ::midonet_openstack::profile::midojava::midojava
 
-    file { '/tmp/99_install_midonet-elk.sh':
-      ensure  => present,
-      content => '/bin/test ! -f /etc/logstash/conf.d/midonet.conf && /bin/yum reinstall -y midonet-elk'
-    } ->
-    exec { '/bin/bash /tmp/99_install_midonet-elk.sh': }
-
     $elk_hosts = hiera('midonet_analytics_node_ips')
 
     class { '::midonet::analytics':
