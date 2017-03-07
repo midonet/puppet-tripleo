@@ -119,6 +119,11 @@ class tripleo::network::midonet::config(
   $step                      = hiera('step'),
 ) {
   if $step >= 5 {
+
+    # Get the FQDN of the first MidoNet Gateway (we only support 1 GW)
+    $midonet_gateway_nodes    = hiera('midonet_gateway_node_names')
+    $midonet_gateway_hostname = $midonet_gateway_nodes[0]
+
     anchor { 'network_creation::begin': } ->
     midonet::resources::network_creation { 'Edge Router Setup':
       tenant_name         => $neutron_tenant_name,
@@ -132,7 +137,7 @@ class tripleo::network::midonet::config(
       gateway_ip          => $gateway_ip,
       subnet_cidr         => $subnet_cidr,
       allocation_pools    => [$allocation_pools],
-      binding_host_id     => $::fqdn,
+      binding_host_id     => $midonet_gateway_hostname,
       require             => Class['::neutron'],
     } ->
     anchor { 'network_creation::end': }
