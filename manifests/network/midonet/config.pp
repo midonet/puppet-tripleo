@@ -148,13 +148,19 @@ class tripleo::network::midonet::config(
       'MIDONET/client': value => 'midonet_ext.neutron.client.api.MidonetApiClient';
     }
 
+    if $::hostname == downcase($bootstrap_node) {
+      $sync_db = true
+    } else {
+      $sync_db = false
+    }
+
     class { '::neutron::plugins::midonet':
       midonet_api_ip    => $midonet_cluster_ip,
       midonet_api_port  => $midonet_cluster_port,
       keystone_username => $keystone_username,
       keystone_password => $keystone_password,
       keystone_tenant   => $keystone_tenant,
-      sync_db           => true,
+      sync_db           => $sync_db,
     }
   }
 }
