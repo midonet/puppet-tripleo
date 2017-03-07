@@ -93,6 +93,10 @@
 # Tenant on which $keystone_username has permissions.
 # Defaults to hiera('neutron::keystone::auth::tenant', undef)
 #
+# [*bootstrap_node*]
+# (Optional) The hostname of the node responsible for bootstrapping tasks
+# Defaults to hiera('bootstrap_nodeid')
+#
 class tripleo::network::midonet::config(
   $edge_router_name          = hiera('nc_edge_router_name', undef),
   $edge_network_name         = hiera('nc_edge_network_name', undef),
@@ -111,6 +115,7 @@ class tripleo::network::midonet::config(
   $keystone_username         = hiera('nova::network::neutron::neutron_username', undef),
   $keystone_password         = hiera('neutron::keystone::auth::password', undef),
   $keystone_tenant           = hiera('neutron::keystone::auth::tenant', undef),
+  $bootstrap_node            = hiera('bootstrap_nodeid', undef),
   $step                      = hiera('step'),
 ) {
   if $step >= 5 {
