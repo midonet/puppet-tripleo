@@ -121,8 +121,15 @@ class tripleo::network::midonet::config(
   if $step >= 5 {
 
     # Get the FQDN of the first MidoNet Gateway (we only support 1 GW)
-    $midonet_gateway_nodes    = hiera('midonet_gateway_node_names')
-    $midonet_gateway_hostname = $midonet_gateway_nodes[0]
+    $midonet_gateway_nodes     = hiera('midonet_gateway_node_names')
+    $midonet_gateway_node_name = $midonet_gateway_nodes[0]
+
+    # Convert node_name (which contains the network) into proper FQDN:
+    # node_name : overcloud-controller-0.internalapi.localdomain
+    # hostname  : overcloud-controller-0.localdomain
+    $bad_splitted_midonet_gateway_hostname = split($midonet_gateway_node_name, '[.]')
+    $good_splitted_midonet_gateway_hostname = delete($bad_splitted_midonet_gateway_hostname, $bad_splitted_midonet_gateway_hostname[-2])
+    $midonet_gateway_hostname = join($good_splitted_midonet_gateway_hostname, '.')
 
     anchor { 'network_creation::begin': } ->
     midonet::resources::network_creation { 'Edge Router Setup':
