@@ -118,7 +118,7 @@ class tripleo::network::midonet::config(
   $bootstrap_node            = hiera('bootstrap_nodeid', undef),
   $step                      = hiera('step'),
 ) {
-  if $step >= 5 {
+  if $step >= 5 and $::hostname == downcase($bootstrap_node) {
 
     # Get the FQDN of the first MidoNet Gateway (we only support 1 GW)
     $midonet_gateway_nodes     = hiera('midonet_gateway_node_names')
@@ -152,10 +152,10 @@ class tripleo::network::midonet::config(
   if $step >= 4 {
     if !defined(Neutron_config['service_providers/service_provider'])
     {
-      neutron_config {
-        'client': value => ['LOADBALANCERV2:Midonet:midonet.neutron.services.loadbalancer.v2_driver.MidonetLoadBalancerDriver:default']
+      neutron_config { 'service_providers/service_provider':
+        value   => $neutron_service_providers,
+        require => Class['::neutron::plugins::midonet']
       }
-      Class['::midonet::neutron_plugin'] -> Neutron_config['service_providers/service_providers'] -> Service['neutron-server']
     }
     Neutron_config<| title == 'service_providers/service_provider' |> {
       value => $neutron_service_providers,
