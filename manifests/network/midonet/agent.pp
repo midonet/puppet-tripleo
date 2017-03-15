@@ -64,6 +64,16 @@
 #   (Optional) Amount of heap memory the JVM will use to run the MidoNet Agent.
 #   Defaults to hiera('midonet_agent_heap_size', undef)
 #
+# [*cluster_endpoint*]
+#   (Optional) URL for the MidoNet Cluster endpoint. Should be in the form of
+#   'http://127.0.0.1:8181/midonet-api'.
+#   Defaults to hiera('midonet_cluster_endpoint', undef)
+#
+# [*tenant_name*]
+#   (Optional) Tenant name for the user that is configured to use the MidoNet
+#   CLI.
+#   Defaults to hiera('midonet_user_tenant', undef)
+#
 # [*step*]
 #   (Optional) The current step in deployment. See tripleo-heat-templates
 #   for more details.
@@ -81,6 +91,8 @@ class tripleo::network::midonet::agent (
   $password            = hiera('admin_password', undef),
   $is_mem              = hiera('midonet_version', 'oss'),
   $max_heap_size       = hiera('midonet_agent_heap_size', undef),
+  $cluster_endpoint    = hiera('midonet_cluster_endpoint', undef),
+  $tenant_name         = hiera('midonet_user_tenant', undef),
   $step                = hiera('step'),
 ) {
   include ::midonet_openstack::profile::midojava::midojava
@@ -99,8 +111,10 @@ class tripleo::network::midonet::agent (
 
   if $step >= 4 {
     class { '::midonet::cli':
-      username => $username,
-      password => $password,
+      api_endpoint => $cluster_endpoint,
+      tenant_name  => $tenant_name,
+      username     => $username,
+      password     => $password,
     }
     class { '::midonet::agent':
       controller_host => $controller_host,
