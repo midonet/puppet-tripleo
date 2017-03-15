@@ -137,7 +137,7 @@ class tripleo::network::midonet::config(
     # Dirty workaround: do not configure the network until the gateway is
     # present on the host registry.
     exec { "/bin/midonet-cli -A -e host list | /bin/grep ${midonet_gateway_short_hostname}":
-      tries     => 9999,
+      tries     => 1000,
       try_sleep => 5,
     } ->
     anchor { 'network_creation::begin': } ->
