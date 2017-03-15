@@ -120,17 +120,26 @@ class tripleo::network::midonet::config(
 ) {
   if $step >= 5 and $::hostname == downcase($bootstrap_node) {
 
-    # Get the FQDN of the first MidoNet Gateway (we only support 1 GW)
+    # Get the hostnames (both long & short) of the first MidoNet Gateway
+    # (we only support 1 GW).
     $midonet_gateway_nodes     = hiera('midonet_gateway_node_names')
     $midonet_gateway_node_name = $midonet_gateway_nodes[0]
+    $midonet_gateway_short_hostnames = hiera('midonet_gateway_short_node_names')
+    $midonet_gateway_short_hostname = $midonet_gateway_short_hostnames[0]
 
     # Convert node_name (which contains the network) into proper FQDN:
-    # node_name : overcloud-controller-0.internalapi.localdomain
-    # hostname  : overcloud-controller-0.localdomain
+    # node_name : overcloud-controller-0.internalapi.mydomain.tld
+    # hostname  : overcloud-controller-0.mydomain.tld
     $bad_splitted_midonet_gateway_hostname = split($midonet_gateway_node_name, '[.]')
-    $good_splitted_midonet_gateway_hostname = delete($bad_splitted_midonet_gateway_hostname, $bad_splitted_midonet_gateway_hostname[-2])
+    $good_splitted_midonet_gateway_hostname = delete($bad_splitted_midonet_gateway_hostname, $bad_splitted_midonet_gateway_hostname[-3])
     $midonet_gateway_hostname = join($good_splitted_midonet_gateway_hostname, '.')
 
+    # Dirty workaround: do not configure the network until the gateway is
+    # present on the host registry.
+    exec { "/bin/midonet-cli -A -e host list | /bin/grep ${midonet_gateway_short_hostname}":
+      tries     => 9999,
+      try_sleep => 5,
+    } ->
     anchor { 'network_creation::begin': } ->
     midonet::resources::network_creation { 'Edge Router Setup':
       tenant_name         => $neutron_tenant_name,
