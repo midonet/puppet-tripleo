@@ -156,6 +156,7 @@ class tripleo::network::midonet::gateway(
   $password                = hiera('midonet_password', undef),
   $tenant                  = hiera('auth_tenant', 'admin'),
   $bootstrap_node          = hiera('bootstrap_nodeid', undef),
+  $nic                     = hiera('gateway_physical_nic_name', undef),
   $step                    = hiera('step'),
 ) {
 
@@ -178,6 +179,18 @@ class tripleo::network::midonet::gateway(
       anchor { 'gateway_config::end': }
     }
     elsif $uplink_type == 'bgp' {
+      file { 'check-router-interface-script':
+        ensure  => present,
+        path    => "/tmp/check-router-interface-script.sh",
+        content => template('midonet/gateway/check-router-interface-script.sh.erb'),
+      } ->
+      exec { 'run gateway static creation script':
+        command => "/bin/bash -x /tmp/check-router-interface-script.sh 2>&1 | /bin/tee /tmp/bash.out",
+        returns => ['0', '7'],
+        require => [
+          File['check-router-interface-script'],
+        ]
+      } ->
       anchor { 'gateway_config::begin': } ->
       midonet_gateway_bgp { 'edge-router':
         ensure                  => present,
@@ -204,3 +217,4 @@ class tripleo::network::midonet::gateway(
   }
 
 }
+
