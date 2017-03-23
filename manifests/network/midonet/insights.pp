@@ -82,6 +82,7 @@ class tripleo::network::midonet::insights(
     $elk_hosts = hiera('midonet_analytics_node_ips')
 
     class { '::midonet::analytics':
+      manage_repo      => false,
       heap_size_gb     => $heap_size_gb,
       allinone         => $allinone,
       calliope_port    => $calliope_port,
