@@ -184,7 +184,7 @@ class tripleo::network::midonet::gateway(
         path    => "/tmp/check-router-interface-script.sh",
         content => template('midonet/gateway/check-router-interface-script.sh.erb'),
       } ->
-      exec { 'run gateway static creation script':
+      exec { 'run-check-router-interface-script':
         command => "/bin/bash -x /tmp/check-router-interface-script.sh 2>&1 | /bin/tee /tmp/bash.out",
         timeout => 3600,
         returns => ['0', '7'],
