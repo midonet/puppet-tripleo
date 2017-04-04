@@ -179,6 +179,7 @@ class tripleo::network::midonet::gateway(
       anchor { 'gateway_config::end': }
     }
     elsif $uplink_type == 'bgp' {
+      anchor { 'gateway_config::begin': } ->
       file { 'check-router-interface-script':
         ensure  => present,
         path    => "/tmp/check-router-interface-script.sh",
@@ -192,7 +193,6 @@ class tripleo::network::midonet::gateway(
           File['check-router-interface-script'],
         ]
       } ->
-      anchor { 'gateway_config::begin': } ->
       midonet_gateway_bgp { 'edge-router':
         ensure                  => present,
         bgp_local_as_number     => $bgp_local_as_number,
@@ -209,6 +209,10 @@ class tripleo::network::midonet::gateway(
       } ->
       anchor { 'gateway_config::end': }
     }
+
+    # Avoid possible race condition where the gateway checks the router
+    # interface before actually registering itself
+    Midonet_host_registry[$::fqdn] -> Anchor['gateway_config::begin']
 
     # Configure networks first, configure the gateway afterwards
     if defined(Class['tripleo::network::midonet::config'])

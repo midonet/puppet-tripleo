@@ -131,7 +131,7 @@ class tripleo::network::midonet::config(
     # node_name : overcloud-controller-0.internalapi.mydomain.tld
     # hostname  : overcloud-controller-0.mydomain.tld
     $bad_splitted_midonet_gateway_hostname = split($midonet_gateway_node_name, '[.]')
-    $good_splitted_midonet_gateway_hostname = delete($bad_splitted_midonet_gateway_hostname, $bad_splitted_midonet_gateway_hostname[-3])
+    $good_splitted_midonet_gateway_hostname = delete($bad_splitted_midonet_gateway_hostname, 'internalapi')
     $midonet_gateway_hostname = join($good_splitted_midonet_gateway_hostname, '.')
 
     # Dirty workaround: do not configure the network until the gateway is

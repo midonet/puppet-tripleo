@@ -53,7 +53,7 @@ class tripleo::network::midonet::nsdb(
     anchor { 'zookeeper_begin': } ->
     class { '::midonet_openstack::profile::zookeeper::midozookeeper':
       zk_servers => $nsdb_nodes,
-      id         => extract_id($controller_nodes, $::hostname),
+      id         => extract_id(hiera('midonet_nsdb_short_node_names'), $::hostname),
       client_ip  => $client_ip,
       require    => Class['midonet_openstack::profile::midojava::midojava'],
     } ->

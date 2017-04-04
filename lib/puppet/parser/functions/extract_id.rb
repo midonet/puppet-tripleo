@@ -8,7 +8,8 @@ module Puppet::Parser::Functions
       hosts = [hosts]
     end
     hostname = argv[1]
-    hash = Hash[hosts.map.with_index.to_a]
-    return hash[hostname].to_i + 1
+    puts "Host: #{hosts}"
+    puts "Hostname: #{hostname}"
+    return hosts.index(hostname) + 1
   end
 end
