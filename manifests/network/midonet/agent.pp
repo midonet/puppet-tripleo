@@ -74,6 +74,10 @@
 #   CLI.
 #   Defaults to hiera('midonet_user_tenant', undef)
 #
+# [*underlay_ip_address*]
+#   (Optional) IP which will be used to register the host in the tunnel-zone.
+#   Defaults to hiera('host_registry_ip_addr', undef)
+#
 # [*step*]
 #   (Optional) The current step in deployment. See tripleo-heat-templates
 #   for more details.
@@ -93,6 +97,7 @@ class tripleo::network::midonet::agent (
   $max_heap_size       = hiera('midonet_agent_heap_size', undef),
   $cluster_endpoint    = hiera('midonet_cluster_endpoint', undef),
   $tenant_name         = hiera('midonet_user_tenant', undef),
+  $underlay_ip_address = hiera('host_registry_ip_addr', undef),
   $step                = hiera('step'),
 ) {
   include ::midonet_openstack::profile::midojava::midojava
@@ -130,11 +135,12 @@ class tripleo::network::midonet::agent (
 
   if $step >= 5 {
     midonet_host_registry { $::fqdn:
-      ensure          => present,
-      midonet_api_url => "http://${midonet_cluster_vip}:8181",
-      tunnelzone_type => $tunnelzone_type,
-      username        => $username,
-      password        => $password,
+      ensure              => present,
+      midonet_api_url     => "http://${midonet_cluster_vip}:8181",
+      tunnelzone_type     => $tunnelzone_type,
+      username            => $username,
+      password            => $password,
+      underlay_ip_address => $underlay_ip_address,
     }
   }
 }
