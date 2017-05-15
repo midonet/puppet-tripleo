@@ -121,15 +121,17 @@ class tripleo::network::midonet::agent (
       username     => $username,
       password     => $password,
     }
-    class { '::midonet::agent':
-      controller_host => $controller_host,
-      metadata_port   => $metadata_port,
-      shared_secret   => $shared_secret,
-      manage_repo     => $manage_repo,
-      zookeeper_hosts => generate_api_zookeeper_ips($zookeeper_hosts),
-      max_heap_size   => $max_heap_size,
-      is_mem          => $mem,
-      require         => Class['::midonet_openstack::profile::midojava::midojava'],
+    unless $::hostname =~ /.*control.*/ {
+      class { '::midonet::agent':
+        controller_host => $controller_host,
+        metadata_port   => $metadata_port,
+        shared_secret   => $shared_secret,
+        manage_repo     => $manage_repo,
+        zookeeper_hosts => generate_api_zookeeper_ips($zookeeper_hosts),
+        max_heap_size   => $max_heap_size,
+        is_mem          => $mem,
+        require         => Class['::midonet_openstack::profile::midojava::midojava'],
+      }
     }
   }
 
