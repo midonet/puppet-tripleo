@@ -136,13 +136,15 @@ class tripleo::network::midonet::agent (
   }
 
   if $step >= 5 {
-    midonet_host_registry { $::fqdn:
-      ensure              => present,
-      midonet_api_url     => "http://${midonet_cluster_vip}:8181",
-      tunnelzone_type     => $tunnelzone_type,
-      username            => $username,
-      password            => $password,
-      underlay_ip_address => $underlay_ip_address,
+    unless $::hostname =~ /.*control.*/ {
+      midonet_host_registry { $::fqdn:
+        ensure              => present,
+        midonet_api_url     => "http://${midonet_cluster_vip}:8181",
+        tunnelzone_type     => $tunnelzone_type,
+        username            => $username,
+        password            => $password,
+        underlay_ip_address => $underlay_ip_address,
+      }
     }
   }
 }
